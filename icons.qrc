@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/src">
+        <file>src/load.png</file>
+        <file>src/mult_step.png</file>
+        <file>src/step.png</file>
+        <file>src/add.jpg</file>
+    </qresource>
+</RCC>
