@@ -32,10 +32,10 @@ private:
     const int height = 35;
     Tomasulo *t;
     Ui::MainWindow *ui;
-    QScrollArea* instrArea;
-    QTableWidget* instrWidget;
+//    QScrollArea* instrArea;
+//    QTableWidget* instrWidget;
 
-    QTableWidget* memoryWidget;
+    //QTableWidget* memoryWidget;
     //QLayout* instrLayout;
 };
 

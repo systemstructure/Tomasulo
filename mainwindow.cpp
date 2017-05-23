@@ -14,18 +14,28 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     t = new Tomasulo();
-    instrArea = new QScrollArea(this);
-    instrArea->setGeometry(60,50,8*width,350);
-    instrArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    instrWidget = new QTableWidget(0,7,instrArea);
-    instrWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    instrWidget->setGeometry(60,50,8*width,(t->instr_num+2)*height);
+
+
+    QStringList stationcolLabels;
+    stationcolLabels<<"Name"<<"Time"<<"isBusy"<<"Op"<<"Vi"<<"Vk"<<"Qi"<<"Qk";
+    ui->stationWidget->setHorizontalHeaderLabels(stationcolLabels);
+    QStringList stationrowLabels;
+    stationrowLabels<<"Add1"<<"Add2"<<"Add3"<<"Mult1"<<"Mult2";
+    ui->stationWidget->setVerticalHeaderLabels(stationrowLabels);
+    for(int i = 0; i < 8; i++)
+        ui->stationWidget->setColumnWidth(i, 0.9*width);
+//    instrArea = new QScrollArea(this);
+//    instrArea->setGeometry(60,50,8*width,350);
+//    instrArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+//    instrWidget = new QTableWidget(0,7,instrArea);
+//    instrWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+//    instrWidget->setGeometry(60,50,8*width,(t->instr_num+2)*height);
     QStringList colLabels;
     colLabels << "Name"<<"Desti"<<"Sourcej"<<"Sourcek"<<"发射指令"<<"执行完毕"<<"写回结果";
-    instrWidget->setHorizontalHeaderLabels(colLabels);
+    ui->instrWidget->setHorizontalHeaderLabels(colLabels);
     for(int i = 0; i < 7; i++)
-        instrWidget->setColumnWidth(i, width);
-    instrArea->setWidget(instrWidget);
+        ui->instrWidget->setColumnWidth(i, width);
+    //instrArea->setWidget(instrWidget);
 
     QStringList LScolLabels;
     LScolLabels<<"isBusy"<<"Address";
@@ -36,21 +46,14 @@ MainWindow::MainWindow(QWidget *parent) :
     for(int i = 0; i < 3; i++)
         ui->LSQueueWidget->setColumnWidth(i, 1.5*width);
 
-    memoryWidget = new QTableWidget(0,2,this);
-    memoryWidget->setGeometry(100,500,300,200);
-    QStringList memcolLabels;
-    memcolLabels<<"Address"<<"data";
-    memoryWidget->setHorizontalHeaderLabels(memcolLabels);
-    memoryWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    //memoryWidget = new QTableWidget(0,2,this);
+    //memoryWidget->setGeometry(100,500,300,200);
+    QStringList memrowLabels;
+    memrowLabels<<"Address"<<"data";
+    ui->memoryWidget->setVerticalHeaderLabels(memrowLabels);
+    ui->memoryWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    QStringList stationcolLabels;
-    stationcolLabels<<"Name"<<"Time"<<"isBusy"<<"Op"<<"Vi"<<"Vk"<<"Qi"<<"Qk";
-    ui->stationWidget->setHorizontalHeaderLabels(stationcolLabels);
-    QStringList stationrowLabels;
-    stationrowLabels<<"Add1"<<"Add2"<<"Add3"<<"Mult1"<<"Mult2";
-    ui->stationWidget->setVerticalHeaderLabels(stationrowLabels);
-    for(int i = 0; i < 8; i++)
-        ui->stationWidget->setColumnWidth(i, 0.9*width);
+
 
 
     QStringList regrowLabels;
@@ -89,14 +92,14 @@ void MainWindow::on_addAction_triggered()
 
 void MainWindow::updateInstrWidget()
 {
-    instrWidget->setGeometry(60,50,8*width,(t->instr_num+2)*height);
-    int row = instrWidget->rowCount();
-    instrWidget->setRowCount(row+1);
-    instrWidget->setItem(row,0,
+    //instrWidget->setGeometry(60,50,8*width,(t->instr_num+2)*height);
+    int row = ui->instrWidget->rowCount();
+    ui->instrWidget->setRowCount(row+1);
+    ui->instrWidget->setItem(row,0,
                          new QTableWidgetItem(t->instr_name[t->instr[row].type]));
     for(int i=1;i<4;i++)
     {
-        instrWidget->setItem(row,i,
+        ui->instrWidget->setItem(row,i,
                              new QTableWidgetItem(t->instr[row].parameter[i-1]));
     }
 }
