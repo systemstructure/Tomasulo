@@ -5,6 +5,7 @@
 #include <QInputDialog>
 #include <QFile>
 #include <QFileDialog>
+#include <QDebug>
 
 # pragma execution_character_set("utf-8")
 
@@ -16,20 +17,6 @@ MainWindow::MainWindow(QWidget *parent) :
     t = new Tomasulo();
 
 
-    QStringList stationcolLabels;
-    stationcolLabels<<"Name"<<"Time"<<"isBusy"<<"Op"<<"Vi"<<"Vk"<<"Qi"<<"Qk";
-    ui->stationWidget->setHorizontalHeaderLabels(stationcolLabels);
-    QStringList stationrowLabels;
-    stationrowLabels<<"Add1"<<"Add2"<<"Add3"<<"Mult1"<<"Mult2";
-    ui->stationWidget->setVerticalHeaderLabels(stationrowLabels);
-    for(int i = 0; i < 8; i++)
-        ui->stationWidget->setColumnWidth(i, 0.9*width);
-//    instrArea = new QScrollArea(this);
-//    instrArea->setGeometry(60,50,8*width,350);
-//    instrArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-//    instrWidget = new QTableWidget(0,7,instrArea);
-//    instrWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
-//    instrWidget->setGeometry(60,50,8*width,(t->instr_num+2)*height);
     QStringList colLabels;
     colLabels << "Name"<<"Desti"<<"Sourcej"<<"Sourcek"<<"发射指令"<<"执行完毕"<<"写回结果";
     ui->instrWidget->setHorizontalHeaderLabels(colLabels);
@@ -46,15 +33,19 @@ MainWindow::MainWindow(QWidget *parent) :
     for(int i = 0; i < 3; i++)
         ui->LSQueueWidget->setColumnWidth(i, 1.5*width);
 
-    //memoryWidget = new QTableWidget(0,2,this);
-    //memoryWidget->setGeometry(100,500,300,200);
     QStringList memrowLabels;
     memrowLabels<<"Address"<<"data";
     ui->memoryWidget->setVerticalHeaderLabels(memrowLabels);
     ui->memoryWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-
-
+    QStringList stationcolLabels;
+    stationcolLabels<<"Name"<<"Time"<<"isBusy"<<"Op"<<"Vi"<<"Vk"<<"Qi"<<"Qk";
+    ui->stationWidget->setHorizontalHeaderLabels(stationcolLabels);
+    QStringList stationrowLabels;
+    stationrowLabels<<"Add1"<<"Add2"<<"Add3"<<"Mult1"<<"Mult2";
+    ui->stationWidget->setVerticalHeaderLabels(stationrowLabels);
+    for(int i = 0; i < 8; i++)
+        ui->stationWidget->setColumnWidth(i, 0.9*width);
 
     QStringList regrowLabels;
     regrowLabels<<"expr"<<"data";
@@ -73,26 +64,26 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui; 
+    delete t;
 }
 
 void MainWindow::on_addAction_triggered()
 {
     bool ok = false;
-      QString text = QInputDialog::getText(this,
-                        tr( "input dialog" ),
-                        tr( "Please enter one instruction(use captial letters)" ),
-                        QLineEdit::Normal, QString::null, &ok);
-      if (ok && !text.isEmpty())
-      {
-          t->addOneInstr(text);
-          updateInstrWidget();
-      }
+    QString text = QInputDialog::getText(this,
+                    tr( "input dialog" ),
+                    tr( "Please enter one instruction(use captial letters)" ),
+                    QLineEdit::Normal, QString::null, &ok);
+    if (ok && !text.isEmpty())
+    {
+      t->addOneInstr(text);
+      updateInstrWidget();
+    }
 
 }
 
 void MainWindow::updateInstrWidget()
 {
-    //instrWidget->setGeometry(60,50,8*width,(t->instr_num+2)*height);
     int row = ui->instrWidget->rowCount();
     ui->instrWidget->setRowCount(row+1);
     ui->instrWidget->setItem(row,0,
@@ -104,11 +95,30 @@ void MainWindow::updateInstrWidget()
     }
 }
 
+void MainWindow::updataMemWidget()
+{
+    ui->memoryWidget->setColumnCount(t->memory_num);
+    int col = 0;
+    for(int i=0;i<4096&&col!=t->memory_num;i++)
+    {
+        if(t->memory[i]!=0)
+        {
+            ui->memoryWidget->setItem(0,col,
+                                      new QTableWidgetItem(QString::number(i)));
+            ui->memoryWidget->setItem(1,col,
+                                  new QTableWidgetItem(QString::number(t->memory[i])));
+            col++;
+            qDebug()<<i;
+        }
+
+    }
+}
+
 void MainWindow::on_loadAction_triggered()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),
                                                         NULL,
-                                                        tr("txtFile (*.* *.txt)"));
+                                                        tr("txtFile (*.txt)"));
     if(!fileName.isEmpty())
     {
          QFile file(fileName);
@@ -126,4 +136,20 @@ void MainWindow::on_loadAction_triggered()
     }
 
 
+}
+
+void MainWindow::on_addMemoryAction_triggered()
+{
+    bool ok = false;
+    QString text = QInputDialog::getText(this,
+                    tr( "input dialog" ),
+                    tr( "Please enter memory address and data\n"
+                        "(format address:data,use ';' to input multi memory)\n"
+                        "eg  10:20;11:30"),
+                    QLineEdit::Normal, QString::null, &ok);
+    if (ok && !text.isEmpty())
+    {
+      t->addMemory(text);
+      updataMemWidget();
+    }
 }

@@ -210,12 +210,18 @@
       <x>70</x>
       <y>520</y>
       <width>311</width>
-      <height>91</height>
+      <height>111</height>
      </rect>
     </property>
     <property name="rowCount">
      <number>2</number>
     </property>
+    <attribute name="horizontalHeaderVisible">
+     <bool>false</bool>
+    </attribute>
+    <attribute name="horizontalHeaderDefaultSectionSize">
+     <number>70</number>
+    </attribute>
     <row/>
     <row/>
    </widget>
@@ -330,6 +336,7 @@
    </attribute>
    <addaction name="addAction"/>
    <addaction name="loadAction"/>
+   <addaction name="addMemoryAction"/>
    <addaction name="separator"/>
    <addaction name="onestepAction"/>
    <addaction name="multistepAction"/>
@@ -369,6 +376,15 @@
    </property>
    <property name="text">
     <string>多步执行</string>
+   </property>
+  </action>
+  <action name="addMemoryAction">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/src/src/addm.jpg</normaloff>:/src/src/addm.jpg</iconset>
+   </property>
+   <property name="text">
+    <string>添加内存</string>
    </property>
   </action>
  </widget>

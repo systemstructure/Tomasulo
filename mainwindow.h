@@ -24,19 +24,17 @@ private slots:
 
     void on_loadAction_triggered();
 
+    void on_addMemoryAction_triggered();
+
 private:
     void updateInstrWidget();
-
+    void updataMemWidget();
 private:
     const int width = 70;
     const int height = 35;
     Tomasulo *t;
     Ui::MainWindow *ui;
-//    QScrollArea* instrArea;
-//    QTableWidget* instrWidget;
 
-    //QTableWidget* memoryWidget;
-    //QLayout* instrLayout;
 };
 
 #endif // MAINWINDOW_H

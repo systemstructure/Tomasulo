@@ -4,5 +4,6 @@
         <file>src/mult_step.png</file>
         <file>src/step.png</file>
         <file>src/add.jpg</file>
+        <file>src/addm.jpg</file>
     </qresource>
 </RCC>

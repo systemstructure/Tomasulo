@@ -40,12 +40,17 @@ public:
     LSStation store[3];
 
     int memory[4096];
+    int memory_num;
 
+    float reg[11];
 public:
     void init();
 
     void addOneInstr(QString str);
 
+    void addMemory(QString str);
+
+    void addOneMemory(int address, int data);
 };
 
 #endif // TOMASULO_H
