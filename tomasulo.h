@@ -4,6 +4,7 @@
 const int MAX_INSTR_NUM = 10000;
 
 #include <QString>
+#include <QDebug>
 
 
 struct instruction
@@ -21,6 +22,11 @@ struct instruction
             out << a.parameter[i].toStdString() << ' ';
         }
         out << std::endl;
+    }
+
+    void print() {
+        qDebug() << type << ' '<< parameter[0] << ' ' << parameter[1] << ' ' << parameter[2]
+                 << ' ' << addr;
     }
 };
 
@@ -51,12 +57,12 @@ public:
     const QString instr_name[6] = {"ADDD", "SUBD", "MULD", "DIVD", "LD", "ST"};
     const int clocktime[6] = {2,2,10,40,2,2};
 
-    const int ADDD = 0;
-    const int SUBD = 1;
-    const int MULD = 2;
-    const int DIVD = 3;
-    const int LD = 4;
-    const int ST = 5;
+    static const int ADDD = 0;
+    static const int SUBD = 1;
+    static const int MULD = 2;
+    static const int DIVD = 3;
+    static const int LD = 4;
+    static const int ST = 5;
 
     LSStation lsStation[7];
 
@@ -66,6 +72,7 @@ public:
     int memory_num;
 
     float reg[11];
+    int Qi[11]; //=0表示
 
 public:
     void init();
@@ -76,7 +83,13 @@ public:
 
     void addOneMemory(int address, float data);
 
-    void convParaToRegNo(QString str);
+    int convParaToRegNo(QString str);
+
+    void doWriteBack(int instr_no);
+
+    void printRegs();
+
+    void myTest();
 };
 
 #endif // TOMASULO_H

@@ -1,12 +1,11 @@
 ﻿#include "tomasulo.h"
 #include <QStringList>
-#include <QDebug>
 #include <string.h>
 
 Tomasulo::Tomasulo()
 {
     init();
-
+    myTest();
 }
 
 void Tomasulo::init()
@@ -14,14 +13,15 @@ void Tomasulo::init()
     instr_num = 0;
     memory_num = 0;
     memset(memory, 0, sizeof(memory));
+    memset(reg, 0, sizeof(reg));
 }
 
 void Tomasulo::addOneInstr(QString str)
 {
     QStringList list = str.split(' ');
     int l = list.size();
-    for(int i=0;i<l;i++)
-        qDebug()<<list[i];
+//    for(int i=0;i<l;i++)
+//        qDebug()<<list[i];
     for(int i=0;i<6;i++)
     {
         if(list[0] == instr_name[i])
@@ -37,6 +37,25 @@ void Tomasulo::addOneInstr(QString str)
     case DIVD:
     {
         instr[instr_num].rd = convParaToRegNo(instr[instr_num].parameter[0]);
+        instr[instr_num].rs = convParaToRegNo(instr[instr_num].parameter[1]);
+        instr[instr_num].rt = convParaToRegNo(instr[instr_num].parameter[2]);
+        break;
+    }
+    case LD:
+    {
+        instr[instr_num].rd = convParaToRegNo(instr[instr_num].parameter[0]);
+        instr[instr_num].addr = instr[instr_num].parameter[1].toInt();
+        break;
+    }
+    case ST:
+    {
+        instr[instr_num].rs = convParaToRegNo(instr[instr_num].parameter[0]);
+        instr[instr_num].addr = instr[instr_num].parameter[1].toInt();
+        break;
+    }
+    default:
+    {
+        qDebug() << "Wrong case of instr type.";
     }
     }
 
@@ -76,9 +95,81 @@ void Tomasulo::addOneMemory(int address, float data)
     memory[address] = data;
 }
 
-void Tomasulo::convParaToRegNo(QString str)
+int Tomasulo::convParaToRegNo(QString str)
 {
     QString no_str = str.mid(1);
     int reg_no = no_str.toInt();
     return reg_no;
+}
+
+void Tomasulo::doWriteBack(int instr_no)
+{
+    instruction ins = instr[instr_no];
+    switch (ins.type) {
+    case ADDD:
+    {
+        reg[ins.rd] = reg[ins.rs] + reg[ins.rt];
+        break;
+    }
+    case SUBD:
+    {
+        reg[ins.rd] = reg[ins.rs] - reg[ins.rt];
+        break;
+    }
+    case MULD:
+    {
+        reg[ins.rd] = reg[ins.rs] * reg[ins.rt];
+        break;
+    }
+    case DIVD:
+    {
+        reg[ins.rd] = reg[ins.rs] / reg[ins.rt];
+        break;
+    }
+    case LD:
+    {
+        reg[ins.rd] = memory[ins.addr];
+        break;
+    }
+    case ST:
+    {
+        memory[ins.addr] = reg[ins.rs];
+        break;
+    }
+    default:
+    {
+        qDebug() << "Wrong case of instr type in doWriteBack().";
+    }
+    }
+}
+
+void Tomasulo::printRegs()
+{
+    for(int i = 0; i < 11; i++)
+    {
+        QString ready_or_not = " is Ready.";
+        if (Qi[i] > 0) ready_or_not = "is not ready..";
+        qDebug() << "F" << i << ": " << reg[i] << " " << ready_or_not;
+    }
+}
+
+void Tomasulo::myTest()
+{
+    memory[10] = 0.5;
+    memory[11] = 1.5;
+    memory[12] = 2.5;
+
+    addOneInstr(QString("LD F1 11"));
+    addOneInstr(QString("LD F2 12"));
+    addOneInstr(QString("ADDD F0 F1 F2"));
+    addOneInstr(QString("MULD F3 F1 F2"));
+    addOneInstr(QString("ST F3 23"));
+
+    for (int i = 0; i < instr_num; i++) {
+        instr[i].print();
+        doWriteBack(i);
+    }
+
+    printRegs();
+    qDebug() << memory[23];
 }
