@@ -25,30 +25,52 @@ struct instruction
         }
         out << std::endl;
     }
-
-    void print() {
-        qDebug() << type << ' '<< parameter[0] << ' ' << parameter[1] << ' ' << parameter[2]
-                 << ' ' << addr;
-    }
 };
 
 struct LSStation
 {
     bool isBusy;
-    int clocktime;
     int address;
     bool isRunning;
-    int Qj, Vj;
+    int Qj;
+    float Vj;
     int time;
+    int instr_no;
+    LSStation() {
+        initLSStation();
+    }
+    void initLSStation() {
+        isBusy = false;
+        address = -1;
+        isRunning = false;
+        Qj = -1;
+        Vj = 0;
+        time = -1;
+        instr_no = -1;
+    }
 };
 
 struct ReStation
 {
     int time;
     bool isBusy;
-    int clocktime;
     int op;
-    int Vj,Vk,Qj,Qk;
+    int Qj,Qk;
+    float Vj,Vk;
+    int instr_no;
+    ReStation() {
+        initStation();
+    }
+    void initStation() {
+        time = -1;
+        isBusy = false;
+        op = -1;
+        Qj = -1;
+        Qk = -1;
+        Vj = 0;
+        Vk = 0;
+        instr_no = -1;
+    }
 };
 
 class Tomasulo
@@ -59,16 +81,16 @@ public:
     int instr_num;
     int curr_instr_pos;
     int curr_pc;
-    const QString instr_name[6] = {"ADDD", "SUBD", "MULD", "DIVD", "LD", "ST"};
-    const int clocktime[6] = {2,2,10,40,2,2};
+    const QString instr_name[7] = {"", "ADDD", "SUBD", "MULD", "DIVD", "LD", "ST"};
+    const int clocktime[7] = {0,2,2,10,40,2,2};
     QString station_name[12] = {"","Add1", "Add2","Add3","Mult1","Mult2",
                     "Load1","Load2","Load3","Store1","Store2","Store3"};
-    static const int ADDD = 0;
-    static const int SUBD = 1;
-    static const int MULD = 2;
-    static const int DIVD = 3;
-    static const int LD = 4;
-    static const int ST = 5;
+    static const int ADDD = 1;
+    static const int SUBD = 2;
+    static const int MULD = 3;
+    static const int DIVD = 4;
+    static const int LD = 5;
+    static const int ST = 6;
 
     LSStation lsStation[7];
 
@@ -84,13 +106,14 @@ public:
     float reg[11];
     int Qi[11]; //=0表示已准备好数据，>0表示保留站编号
 
+    int clock;
 
 public:
     void init();
 
-    void addOneInstr(QString str);
+    bool addOneInstr(QString str);
 
-    void addMemory(QString str);
+    bool addMemory(QString str);
 
     void addOneMemory(int address, float data);
 
@@ -104,7 +127,7 @@ public:
 
     void writeBack();
 
-    void doWriteBack(int instr_no);
+    float calResult(ReStation _station);
 
     //以下是辅助函数
 
@@ -112,9 +135,23 @@ public:
 
     void printRegs();
 
+    void printInstr(instruction ins);
+
     int findAvailableStation(int ins_type); //返回保留站编号，返回0表示该type对应的保留站无空闲
 
-    void myTest();
+    void checkIfFinishedAndUpdate(int& running_no);  //检查是否有加减或乘除的保留站执行完毕
+
+    void checkIfFinishedLoadStoreAndUpdate(int ls_no);   //检查lsQueue队首是否执行完毕
+
+    void updateRegQjQk(int r, float result);  //WriteBack中更新Reg数组、各保留站Qj,Qk
+
+    bool isLoadInstr(int ls_no);
+
+    bool allDone();
+
+    bool judgeInstr(QString str);
+
+    bool judgeMem(QString str);
 };
 
 #endif // TOMASULO_H

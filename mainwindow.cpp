@@ -6,6 +6,7 @@
 #include <QFile>
 #include <QFileDialog>
 #include <QDebug>
+#include <QMessageBox>
 
 # pragma execution_character_set("utf-8")
 
@@ -76,7 +77,10 @@ void MainWindow::on_addAction_triggered()
                     QLineEdit::Normal, QString::null, &ok);
     if (ok && !text.isEmpty())
     {
-      t->addOneInstr(text);
+      bool res = t->addOneInstr(text);
+      if(!res)
+          QMessageBox::warning(NULL,"提示","指令输入格式非法");
+      qDebug()<<"res="<<res;
       updateInstrWidget();
     }
 
@@ -94,14 +98,14 @@ void MainWindow::updateInstrWidget()
             ui->instrWidget->setItem(i,j,
                                  new QTableWidgetItem(t->instr[i].parameter[j-1]));
         }
-        for(int j=5;j<7;j++)
+        for(int j=4;j<7;j++)
         {
-            if(t->instr[i].event[j-5])
+            if(t->instr[i].event[j-4])
                 ui->instrWidget->setItem(i,j,
-                                     new QTableWidgetItem("Ok");
+                                     new QTableWidgetItem("Ok"));
             else
                 ui->instrWidget->setItem(i,j,
-                                    new QTableWidgetItem("");
+                                    new QTableWidgetItem(""));
         }
     }
 
@@ -181,7 +185,8 @@ void MainWindow::updateRegister()
 
 void MainWindow::updateLabel()
 {
-    ui->pcLabel->setText("PC:"+QString::number(t->curr_pc));
+    ui->pcLabel->setText("PC:"+QString::number(t->curr_instr_pos));
+    ui->clockLabel->setText("时钟周期:"+QString::number(t->clock));
 }
 
 void MainWindow::updateAll()
@@ -191,6 +196,7 @@ void MainWindow::updateAll()
     updateLSWidget();
     updateReStationWidget();
     updateRegister();
+    updateLabel();
 }
 
 void MainWindow::on_loadAction_triggered()
@@ -209,7 +215,13 @@ void MainWindow::on_loadAction_triggered()
          QString tmp;
          while((tmp = in.readLine()) != NULL)
          {
-             t->addOneInstr(tmp);
+             bool res = t->addOneInstr(tmp);
+             if(!res)
+             {
+                 QMessageBox::warning(NULL,"提示","指令输入格式非法");
+                 updateInstrWidget();
+                 return;
+             }
 
          }
          updateInstrWidget();
@@ -229,7 +241,10 @@ void MainWindow::on_addMemoryAction_triggered()
                     QLineEdit::Normal, QString::null, &ok);
     if (ok && !text.isEmpty())
     {
-      t->addMemory(text);
+      bool res = t->addMemory(text);
+      if(!res)
+          QMessageBox::warning(NULL,"提示","输入格式非法");
+      qDebug()<<"res="<<res;
       updateMemWidget();
     }
 }
@@ -242,6 +257,12 @@ void MainWindow::on_deleteAction_triggered()
 
 void MainWindow::on_onestepAction_triggered()
 {
+    bool res = t->allDone();
+    if(res)
+    {
+        QMessageBox::warning(NULL,"提示","指令已执行完毕");
+        return;
+    }
     t->runOneStep();
     updateAll();
 }
@@ -259,6 +280,7 @@ void MainWindow::on_multistepAction_triggered()
         {
             t->runOneStep();
         }
+        updateAll();
     }
 
 
