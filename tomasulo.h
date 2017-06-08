@@ -36,6 +36,7 @@ struct LSStation
     bool isBusy;
     int clocktime;
     int address;
+    bool isRunning;
 };
 
 struct ReStation
@@ -71,7 +72,7 @@ public:
 
     int addRunningNo;   //正在运行的保留站编号， -1表示没有运行的加减法保留站
     int mulRunningNo;
-    queue<int> lsQueue;
+    std::queue<int> lsQueue;
 
     float memory[4096];
     int memory_num;

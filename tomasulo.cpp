@@ -112,10 +112,69 @@ void Tomasulo::runOneStep()
     writeBack();
 }
 
-void Tomasulo::issue()
+void Tomasulo::issue()  // !!! Qi, Qj, Qk 一定是1~11 !!!
 {
     instruction cur_ins = instr[curr_instr_pos];
+    int r = findAvailableStation(cur_ins.type);
+    if (r == 0) return; //如果没有空闲保留站，直接返回
 
+    //如果有空闲保留站，编号为r，则当前指令cur_ins进入保留站r
+    int rs = cur_ins.rs;
+    int rt = cur_ins.rt;
+    int rd = cur_ins.rd;
+    int addr = cur_ins.addr;
+    switch (cur_ins.type)
+    {
+    case ADDD:
+    case SUBD:
+    case MULD:
+    case DIVD: //浮点数运算指令，r = 1~5
+    {
+        if (Qi[rs] != 0) {
+            station[r].Qj = Qi[rs];
+        } else {
+            station[r].Vj = reg[rs];
+            station[r].Qj = 0;
+        }
+        if (Qi[rt] != 0) {
+            station[r].Qk = Qi[rt];
+        } else {
+            station[r].Vk = reg[rt];
+            station[r].Qk = 0;
+        }
+        station[r].isBusy = true;
+        station[r].op = cur_ins.type;
+        Qi[rd] = r;
+        break;
+    }
+    case LD:  //LS指令，r = 1~6，需转化成6~10
+    {
+        lsStation[r].isBusy = true;
+        lsStation[r].address = addr;
+        Qi[rd] = r + 5;
+        lsQueue.push(r); // 该保留站编号加入LS队列
+        break;
+    }
+    case ST:
+    {
+        if (Qi[rs] != 0) {
+            station[r].Qj = Qi[rs];
+        } else {
+            station[r].Vj = reg[rs];
+            station[r].Qj = 0;
+        }
+        lsStation[r].isBusy = true;
+        lsStation[r].address = addr;
+        lsQueue.push(r); // 该保留站编号加入LS队列
+        break;
+    }
+    default:
+    {
+        qDebug() << "Wrong type of instruction in issue().";
+    }
+    }
+
+    curr_instr_pos ++;
 }
 
 void Tomasulo::execute()
@@ -209,17 +268,32 @@ int Tomasulo::findAvailableStation(int ins_type)
                 return i;
             }
         }
+        break;
     }
     case LD:
-    case ST:
     {
-        for(int i = 1; i <= 6; ++i) {
+        for(int i = 1; i <= 3; ++i) {
             if(!lsStation[i].isBusy) {
                 return i;
             }
         }
+        break;
+    }
+    case ST:
+    {
+        for(int i = 4; i <= 6; ++i) {
+            if(!lsStation[i].isBusy) {
+                return i;
+            }
+        }
+        break;
+    }
+    default:
+    {
+        qDebug() << "Wrong type of instruction in findAvailableStation.";
     }
     }
+    return 0;
 }
 
 void Tomasulo::myTest()
