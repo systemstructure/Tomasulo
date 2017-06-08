@@ -14,6 +14,12 @@ void Tomasulo::init()
     instr_num = 0;
     memory_num = 0;
     memset(memory,0,sizeof(memory));
+    memset(Qi,0,sizeof(Qi));
+    memset(reg,0,sizeof(reg));
+    for(int i=1;i<6;i++)
+        station[i].isBusy = false;
+    for(int i=1;i<7;i++)
+        lsStation[i].isBusy = false;
 }
 
 void Tomasulo::addOneInstr(QString str)

@@ -35,7 +35,7 @@ struct ReStation
     int time;
     bool isBusy;
     int op;
-    int Vj,Vk,Qi,Qk;
+    int Vj,Vk,Qj,Qk;
 };
 
 class Tomasulo
@@ -47,7 +47,8 @@ public:
     int curr_instr_pos;
     const QString instr_name[6] = {"ADDD", "SUBD", "MULD", "DIVD", "LD", "ST"};
     const int clocktime[6] = {2,2,10,40,2,2};
-
+    QString station_name[12] = {"","Add1", "Add2","Add3","Mult1","Mult2",
+                    "Load1","Load2","Load3","Store1","Store2","Store3"};
     const int ADDD = 0;
     const int SUBD = 1;
     const int MULD = 2;
@@ -63,6 +64,7 @@ public:
     int memory_num;
 
     float reg[11];
+    int Qi[11];
 
 public:
     void init();

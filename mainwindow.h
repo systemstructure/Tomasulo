@@ -28,11 +28,15 @@ private slots:
 
     void on_deleteAction_triggered();
 
+    void on_onestepAction_triggered();
+
 private:
     void updateInstrWidget();
     void updateMemWidget();
     void updateLSWidget();
     void updateReStationWidget();
+    void updateRegister();
+    void updateAll();
 private:
     const int width = 70;
     const int height = 35;

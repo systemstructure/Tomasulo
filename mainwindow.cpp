@@ -39,12 +39,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->memoryWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     QStringList stationcolLabels;
-    stationcolLabels<<"Name"<<"Time"<<"isBusy"<<"Op"<<"Vi"<<"Vk"<<"Qi"<<"Qk";
+    stationcolLabels<<"isBusy"<<"Time"<<"Op"<<"Vi"<<"Vk"<<"Qi"<<"Qk";
     ui->stationWidget->setHorizontalHeaderLabels(stationcolLabels);
     QStringList stationrowLabels;
     stationrowLabels<<"Add1"<<"Add2"<<"Add3"<<"Mult1"<<"Mult2";
     ui->stationWidget->setVerticalHeaderLabels(stationrowLabels);
-    for(int i = 0; i < 8; i++)
+    for(int i = 0; i < 7; i++)
         ui->stationWidget->setColumnWidth(i, 0.9*width);
 
     QStringList regrowLabels;
@@ -58,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent) :
     {
         ui->registerWidget->setColumnWidth(i, width);
     }
-
+    updateAll();
 }
 
 MainWindow::~MainWindow()
@@ -119,40 +119,64 @@ void MainWindow::updateMemWidget()
 
 void MainWindow::updateLSWidget()
 {
-//    for(int i=0;i<3;i++)
-//    {
-//        if(t->load[i].isBusy)
-//        {
-//            ui->LSQueueWidget->setItem(i,0,new QTableWidgetItem("Yes"));
-//            ui->LSQueueWidget->setItem(i,1,
-//                                  new QTableWidgetItem(QString::number(t->load[i].address)));
-//        }
-//        else
-//        {
-//            ui->LSQueueWidget->setItem(i,0,new QTableWidgetItem("No"));
-//            ui->LSQueueWidget->setItem(i,1,new QTableWidgetItem(""));
-//        }
+    for(int i=1;i<7;i++)
+    {
+        if(t->lsStation[i].isBusy)
+        {
+            ui->LSQueueWidget->setItem(i-1,0,new QTableWidgetItem("Yes"));
+            ui->LSQueueWidget->setItem(i-1,1,
+                                  new QTableWidgetItem(QString::number(t->lsStation[i].address)));
+        }
+        else
+        {
+            ui->LSQueueWidget->setItem(i-1,0,new QTableWidgetItem("No"));
+            ui->LSQueueWidget->setItem(i-1,1,new QTableWidgetItem(""));
+        }
 
-//        if(t->store[i].isBusy)
-//        {
-//            ui->LSQueueWidget->setItem(i+3,0,new QTableWidgetItem("Yes"));
-//            ui->LSQueueWidget->setItem(i+3,1,
-//                                  new QTableWidgetItem(QString::number(t->store[i].address)));
-//        }
-//        else
-//        {
-//            ui->LSQueueWidget->setItem(i+3,0,new QTableWidgetItem("No"));
-//            ui->LSQueueWidget->setItem(i+3,1,new QTableWidgetItem(""));
-//        }
-//    }
+    }
 }
 
 void MainWindow::updateReStationWidget()
 {
     for(int i=1;i<6;i++)
     {
-
+        if(t->station[i].isBusy)
+        {
+            ui->stationWidget->setItem(i-1,0,new QTableWidgetItem("Yes"));
+            ui->stationWidget->setItem(i-1,1,new QTableWidgetItem(QString::number(t->station[i].time)));
+            ui->stationWidget->setItem(i-1,2,new QTableWidgetItem(t->instr_name[t->station[i].op]));
+            ui->stationWidget->setItem(i-1,3,new QTableWidgetItem(QString::number(t->station[i].Vj)));
+            ui->stationWidget->setItem(i-1,4,new QTableWidgetItem(QString::number(t->station[i].Vk)));
+            ui->stationWidget->setItem(i-1,5,new QTableWidgetItem(t->station_name[t->station[i].Qj]));
+            ui->stationWidget->setItem(i-1,6,new QTableWidgetItem(t->station_name[t->station[i].Qk]));
+        }
+        else
+        {
+            ui->stationWidget->setItem(i-1,0,new QTableWidgetItem("No"));
+            for(int j=1;j<7;j++)
+            {
+                ui->stationWidget->setItem(i-1, j, new QTableWidgetItem(""));
+            }
+        }
     }
+}
+
+void MainWindow::updateRegister()
+{
+    for(int i=0;i<11;i++)
+    {
+        ui->registerWidget->setItem(0,i,new QTableWidgetItem(t->station_name[t->Qi[i]]));
+        ui->registerWidget->setItem(1,i,new QTableWidgetItem(QString::number(t->reg[i])));
+    }
+}
+
+void MainWindow::updateAll()
+{
+    updateInstrWidget();
+    updateMemWidget();
+    updateLSWidget();
+    updateReStationWidget();
+    updateRegister();
 }
 
 void MainWindow::on_loadAction_triggered()
@@ -199,6 +223,10 @@ void MainWindow::on_addMemoryAction_triggered()
 void MainWindow::on_deleteAction_triggered()
 {
     t->init();
-    updateInstrWidget();
-    updateMemWidget();
+    updateAll();
+}
+
+void MainWindow::on_onestepAction_triggered()
+{
+
 }
