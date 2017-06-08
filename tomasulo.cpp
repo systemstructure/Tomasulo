@@ -12,8 +12,18 @@ void Tomasulo::init()
 {
     instr_num = 0;
     memory_num = 0;
-    memset(memory, 0, sizeof(memory));
-    memset(reg, 0, sizeof(reg));
+    curr_instr_pos = 0;
+    addRunningNo = -1;
+    mulRunningNo = -1;
+
+    memset(memory,0,sizeof(memory));
+    memset(Qi,0,sizeof(Qi));
+    memset(reg,0,sizeof(reg));
+
+    for(int i=1;i<6;i++)
+        station[i].isBusy = false;
+    for(int i=1;i<7;i++)
+        lsStation[i].isBusy = false;
 }
 
 void Tomasulo::addOneInstr(QString str)
@@ -95,11 +105,27 @@ void Tomasulo::addOneMemory(int address, float data)
     memory[address] = data;
 }
 
-int Tomasulo::convParaToRegNo(QString str)
+void Tomasulo::runOneStep()
 {
-    QString no_str = str.mid(1);
-    int reg_no = no_str.toInt();
-    return reg_no;
+    issue();
+    execute();
+    writeBack();
+}
+
+void Tomasulo::issue()
+{
+    instruction cur_ins = instr[curr_instr_pos];
+
+}
+
+void Tomasulo::execute()
+{
+
+}
+
+void Tomasulo::writeBack()
+{
+
 }
 
 void Tomasulo::doWriteBack(int instr_no)
@@ -143,6 +169,14 @@ void Tomasulo::doWriteBack(int instr_no)
     }
 }
 
+
+int Tomasulo::convParaToRegNo(QString str)
+{
+    QString no_str = str.mid(1);
+    int reg_no = no_str.toInt();
+    return reg_no;
+}
+
 void Tomasulo::printRegs()
 {
     for(int i = 0; i < 11; i++)
@@ -150,6 +184,41 @@ void Tomasulo::printRegs()
         QString ready_or_not = " is Ready.";
         if (Qi[i] > 0) ready_or_not = "is not ready..";
         qDebug() << "F" << i << ": " << reg[i] << " " << ready_or_not;
+    }
+}
+
+int Tomasulo::findAvailableStation(int ins_type)
+{
+    switch (ins_type)
+    {
+    case ADDD:
+    case SUBD:
+    {
+        for(int i = 1; i <= 3; ++i) {
+            if(!station[i].isBusy) {
+                return i;
+            }
+        }
+        break;
+    }
+    case MULD:
+    case DIVD:
+    {
+        for(int i = 4; i <= 5; ++i) {
+            if(!station[i].isBusy) {
+                return i;
+            }
+        }
+    }
+    case LD:
+    case ST:
+    {
+        for(int i = 1; i <= 6; ++i) {
+            if(!lsStation[i].isBusy) {
+                return i;
+            }
+        }
+    }
     }
 }
 

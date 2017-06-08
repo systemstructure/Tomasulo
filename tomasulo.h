@@ -5,6 +5,7 @@ const int MAX_INSTR_NUM = 10000;
 
 #include <QString>
 #include <QDebug>
+#include <queue>
 
 
 struct instruction
@@ -39,12 +40,11 @@ struct LSStation
 
 struct ReStation
 {
-    QString name;
     int time;
     bool isBusy;
     int clocktime;
     int op;
-    int Vj,Vk,Qi,Qk;
+    int Vj,Vk,Qj,Qk;
 };
 
 class Tomasulo
@@ -56,7 +56,8 @@ public:
     int curr_instr_pos;
     const QString instr_name[6] = {"ADDD", "SUBD", "MULD", "DIVD", "LD", "ST"};
     const int clocktime[6] = {2,2,10,40,2,2};
-
+    QString station_name[12] = {"","Add1", "Add2","Add3","Mult1","Mult2",
+                    "Load1","Load2","Load3","Store1","Store2","Store3"};
     static const int ADDD = 0;
     static const int SUBD = 1;
     static const int MULD = 2;
@@ -68,11 +69,16 @@ public:
 
     ReStation station[6];
 
+    int addRunningNo;   //正在运行的保留站编号， -1表示没有运行的加减法保留站
+    int mulRunningNo;
+    queue<int> lsQueue;
+
     float memory[4096];
     int memory_num;
 
     float reg[11];
-    int Qi[11]; //=0表示
+    int Qi[11]; //=0表示已准备好数据，>0表示保留站编号
+
 
 public:
     void init();
@@ -83,11 +89,25 @@ public:
 
     void addOneMemory(int address, float data);
 
-    int convParaToRegNo(QString str);
+    //算法运行相关函数
+
+    void runOneStep();
+
+    void issue();
+
+    void execute();
+
+    void writeBack();
 
     void doWriteBack(int instr_no);
 
+    //以下是辅助函数
+
+    int convParaToRegNo(QString str);
+
     void printRegs();
+
+    int findAvailableStation(int ins_type); //返回保留站编号，返回0表示该type对应的保留站无空闲
 
     void myTest();
 };
