@@ -30,6 +30,8 @@ private slots:
 
     void on_onestepAction_triggered();
 
+    void on_multistepAction_triggered();
+
 private:
     void updateInstrWidget();
     void updateMemWidget();

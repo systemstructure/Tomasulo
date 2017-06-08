@@ -289,7 +289,7 @@
      <string>Load and Store Queue</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_6">
+   <widget class="QLabel" name="pcLabel">
     <property name="geometry">
      <rect>
       <x>130</x>
@@ -302,7 +302,7 @@
      <string>PC:0</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_7">
+   <widget class="QLabel" name="clockLabel">
     <property name="geometry">
      <rect>
       <x>260</x>
