@@ -117,6 +117,44 @@ void MainWindow::updateMemWidget()
     }
 }
 
+void MainWindow::updateLSWidget()
+{
+//    for(int i=0;i<3;i++)
+//    {
+//        if(t->load[i].isBusy)
+//        {
+//            ui->LSQueueWidget->setItem(i,0,new QTableWidgetItem("Yes"));
+//            ui->LSQueueWidget->setItem(i,1,
+//                                  new QTableWidgetItem(QString::number(t->load[i].address)));
+//        }
+//        else
+//        {
+//            ui->LSQueueWidget->setItem(i,0,new QTableWidgetItem("No"));
+//            ui->LSQueueWidget->setItem(i,1,new QTableWidgetItem(""));
+//        }
+
+//        if(t->store[i].isBusy)
+//        {
+//            ui->LSQueueWidget->setItem(i+3,0,new QTableWidgetItem("Yes"));
+//            ui->LSQueueWidget->setItem(i+3,1,
+//                                  new QTableWidgetItem(QString::number(t->store[i].address)));
+//        }
+//        else
+//        {
+//            ui->LSQueueWidget->setItem(i+3,0,new QTableWidgetItem("No"));
+//            ui->LSQueueWidget->setItem(i+3,1,new QTableWidgetItem(""));
+//        }
+//    }
+}
+
+void MainWindow::updateReStationWidget()
+{
+    for(int i=1;i<6;i++)
+    {
+
+    }
+}
+
 void MainWindow::on_loadAction_triggered()
 {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),

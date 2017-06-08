@@ -32,6 +32,7 @@ struct LSStation
 struct ReStation
 {
     QString name;
+    int time;
     bool isBusy;
     int op;
     int Vj,Vk,Qi,Qk;
@@ -48,16 +49,15 @@ public:
     const int clocktime[6] = {2,2,10,40,2,2};
 
     const int ADDD = 0;
-    const int SUBU = 1;
+    const int SUBD = 1;
     const int MULD = 2;
     const int DIVD = 3;
     const int LD = 4;
     const int ST = 5;
 
-    LSStation load[3];
-    LSStation store[3];
+    LSStation lsStation[7];
 
-    ReStation station[5];
+    ReStation station[6];
 
     float memory[4096];
     int memory_num;
