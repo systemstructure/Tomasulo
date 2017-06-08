@@ -13,6 +13,8 @@ void Tomasulo::init()
 {
     instr_num = 0;
     memory_num = 0;
+    curr_pc = 0;
+    curr_instr_pos = 0;
     memset(memory,0,sizeof(memory));
     memset(Qi,0,sizeof(Qi));
     memset(reg,0,sizeof(reg));

@@ -36,6 +36,7 @@ private:
     void updateLSWidget();
     void updateReStationWidget();
     void updateRegister();
+    void updateLabel();
     void updateAll();
 private:
     const int width = 70;

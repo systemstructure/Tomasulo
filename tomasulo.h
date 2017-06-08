@@ -45,6 +45,7 @@ public:
     instruction instr[MAX_INSTR_NUM];
     int instr_num;
     int curr_instr_pos;
+    int curr_pc;
     const QString instr_name[6] = {"ADDD", "SUBD", "MULD", "DIVD", "LD", "ST"};
     const int clocktime[6] = {2,2,10,40,2,2};
     QString station_name[12] = {"","Add1", "Add2","Add3","Mult1","Mult2",

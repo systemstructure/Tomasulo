@@ -170,6 +170,11 @@ void MainWindow::updateRegister()
     }
 }
 
+void MainWindow::updateLabel()
+{
+
+}
+
 void MainWindow::updateAll()
 {
     updateInstrWidget();
