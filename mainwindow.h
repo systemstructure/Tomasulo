@@ -31,6 +31,8 @@ private slots:
 private:
     void updateInstrWidget();
     void updateMemWidget();
+    void updateLSWidget();
+    void updateReStationWidget();
 private:
     const int width = 70;
     const int height = 35;
