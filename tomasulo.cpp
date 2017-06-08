@@ -5,14 +5,17 @@
 Tomasulo::Tomasulo()
 {
     init();
-    myTest();
+    //myTest();
 }
 
 void Tomasulo::init()
 {
     instr_num = 0;
     memory_num = 0;
+
+    curr_pc = 0;
     curr_instr_pos = 0;
+
     addRunningNo = -1;
     mulRunningNo = -1;
 
@@ -177,8 +180,55 @@ void Tomasulo::issue()  // !!! Qi, Qj, Qk 一定是1~11 !!!
     curr_instr_pos ++;
 }
 
+
+
 void Tomasulo::execute()
 {
+    if(addRunningNo == -1)
+    {
+        for(int i=1;i<4;i++)
+        {
+            if(station[i].Qj == 0 && station[i].Qk == 0)
+            {
+                addRunningNo = i;
+                station[i].time = clocktime[station[i].op];
+                break;
+            }
+        }
+    }
+    else
+    {
+        station[addRunningNo].time--;
+    }
+
+    if(mulRunningNo == -1)
+    {
+        for(int i=4;i<6;i++)
+        {
+            if(station[i].Qj == 0 && station[i].Qk == 0)
+            {
+                mulRunningNo = i;
+                station[i].time = clocktime[station[i].op];
+                break;
+            }
+        }
+    }
+    else
+    {
+        station[mulRunningNo].time--;
+    }
+
+    int ls_no = lsQueue.front();
+    if(!lsStation[ls_no].isRunnning && lsStation[ls_no].Qj == 0)
+    {
+        lsStation[ls_no].time = 2;
+        lsStation[ls_no].isRunnning = true;
+    }
+    if(lsStation[ls_no].isRunnning)
+    {
+        lsStation[ls_no].time--;
+
+    }
 
 }
 

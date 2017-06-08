@@ -30,12 +30,15 @@ private slots:
 
     void on_onestepAction_triggered();
 
+    void on_multistepAction_triggered();
+
 private:
     void updateInstrWidget();
     void updateMemWidget();
     void updateLSWidget();
     void updateReStationWidget();
     void updateRegister();
+    void updateLabel();
     void updateAll();
 private:
     const int width = 70;

@@ -94,6 +94,15 @@ void MainWindow::updateInstrWidget()
             ui->instrWidget->setItem(i,j,
                                  new QTableWidgetItem(t->instr[i].parameter[j-1]));
         }
+        for(int j=5;j<7;j++)
+        {
+            if(t->instr[i].event[j-5])
+                ui->instrWidget->setItem(i,j,
+                                     new QTableWidgetItem("Ok");
+            else
+                ui->instrWidget->setItem(i,j,
+                                    new QTableWidgetItem("");
+        }
     }
 
 }
@@ -170,6 +179,11 @@ void MainWindow::updateRegister()
     }
 }
 
+void MainWindow::updateLabel()
+{
+    ui->pcLabel->setText("PC:"+QString::number(t->curr_pc));
+}
+
 void MainWindow::updateAll()
 {
     updateInstrWidget();
@@ -228,5 +242,24 @@ void MainWindow::on_deleteAction_triggered()
 
 void MainWindow::on_onestepAction_triggered()
 {
+    t->runOneStep();
+    updateAll();
+}
+
+void MainWindow::on_multistepAction_triggered()
+{
+    bool ok = false;
+    int num = QInputDialog::getInt(this,
+                                   tr( "input dialog" ),
+                                   tr( "Please enter the number of steps"),
+                                   5,0,MAX_INSTR_NUM,1,&ok);
+    if (ok)
+    {
+        for(int i=0;i<num;i++)
+        {
+            t->runOneStep();
+        }
+    }
+
 
 }
