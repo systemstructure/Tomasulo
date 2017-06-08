@@ -12,6 +12,7 @@ struct instruction
     int type;
     QString parameter[3];
     int rs, rt, rd;
+    int addr;
     friend std::ostream & operator <<(std::ostream &out, instruction &a)
     {
         out << a.type;
@@ -26,6 +27,7 @@ struct instruction
 struct LSStation
 {
     bool isBusy;
+    int clocktime;
     int address;
 };
 
@@ -33,6 +35,7 @@ struct ReStation
 {
     QString name;
     bool isBusy;
+    int clocktime;
     int op;
     int Vj,Vk,Qi,Qk;
 };
@@ -48,7 +51,7 @@ public:
     const int clocktime[6] = {2,2,10,40,2,2};
 
     const int ADDD = 0;
-    const int SUBU = 1;
+    const int SUBD = 1;
     const int MULD = 2;
     const int DIVD = 3;
     const int LD = 4;
@@ -72,6 +75,8 @@ public:
     void addMemory(QString str);
 
     void addOneMemory(int address, float data);
+
+    void convParaToRegNo(QString str);
 };
 
 #endif // TOMASULO_H
