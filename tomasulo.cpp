@@ -12,7 +12,7 @@ void Tomasulo::init()
 {
     clock = 0;
 
-    for (int i = 0; i < instr_num; i++)
+    for (int i = 0; i < MAX_INSTR_NUM; i++)
     {
         for (int j = 0; j < 3; j++)
         {
@@ -233,8 +233,9 @@ void Tomasulo::execute()
             }
         }
     }
-    else    //有ADDD/SUBD在跑，则直接time减一
+    if(addRunningNo != -1)    //有ADDD/SUBD在跑，则直接time减一
     {
+        qDebug() << "addRunningNo" ;
         station[addRunningNo].time--;
         if (station[addRunningNo].time == 0) instr[station[addRunningNo].instr_no].event[1] = true;
         qDebug() << "AddStation" << addRunningNo << "runs a clock, Time = " << station[addRunningNo].time;
@@ -252,7 +253,7 @@ void Tomasulo::execute()
             }
         }
     }
-    else
+    if(mulRunningNo != -1)
     {
         station[mulRunningNo].time--;
         if (station[mulRunningNo].time == 0) instr[station[mulRunningNo].instr_no].event[1] = true;
@@ -392,10 +393,16 @@ void Tomasulo::checkIfFinishedAndUpdate(int& running_no) //WriteBack检查Add/Mu
         qDebug() << "Finished station[" << r << "].";
         float result = calResult(station[r]);
         updateRegQjQk(r, result);
-        running_no = -1;
+//        running_no = -1;
         instr[station[r].instr_no].event[2] = true;
         station[r].initStation();
+        if (running_no >= 1 && running_no <= 3) {
+            addRunningNo = -1;
+        } else {
+            mulRunningNo = -1;
+        }
     }
+
 }
 
 void Tomasulo::checkIfFinishedLoadStoreAndUpdate(int ls_no)
@@ -410,7 +417,7 @@ void Tomasulo::checkIfFinishedLoadStoreAndUpdate(int ls_no)
         }
         else {  //ST指令执行完成
             qDebug() << "Finished lsStation[" << r-3 << "].";
-            memory[lsStation[r].address] = lsStation[r].Vj;
+            addOneMemory(lsStation[r].address, lsStation[r].Vj);
         }
         instr[lsStation[r].instr_no].event[2] = true;
         lsStation[r].initLSStation();
@@ -467,7 +474,7 @@ bool Tomasulo::allDone()
 
 bool Tomasulo::judgeInstr(QString str)
 {
-    int len[] = {4,4,4,4,3,3};
+    int len[] = {0, 4,4,4,4,3,3};
     QString reg_name[11];
     for(int i = 0 ; i < 11; i ++)
     {
@@ -478,7 +485,7 @@ bool Tomasulo::judgeInstr(QString str)
 
     //判断指令名字是否符合规则
     int g = -1;
-    for(int i = 0; i < 6; i ++)
+    for(int i = 1; i <= 6; i ++)
     {
         if(list[0] == instr_name[i])
         {
@@ -497,7 +504,7 @@ bool Tomasulo::judgeInstr(QString str)
     }
 
     //判断指令参数格式是否符合规则
-    if(g < 4)
+    if(g <= 4)
     {
         //只能为寄存器的名字
         for(int i = 1; i < l; i ++)

@@ -111,6 +111,8 @@ public:
 public:
     void init();
 
+    //前端添加指令和内存数据相关函数
+
     bool addOneInstr(QString str);
 
     bool addMemory(QString str);
