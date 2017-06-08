@@ -84,18 +84,21 @@ void MainWindow::on_addAction_triggered()
 
 void MainWindow::updateInstrWidget()
 {
-    int row = ui->instrWidget->rowCount();
-    ui->instrWidget->setRowCount(row+1);
-    ui->instrWidget->setItem(row,0,
-                         new QTableWidgetItem(t->instr_name[t->instr[row].type]));
-    for(int i=1;i<4;i++)
+    ui->instrWidget->setRowCount(t->instr_num);
+    for(int i=0;i<t->instr_num;i++)
     {
-        ui->instrWidget->setItem(row,i,
-                             new QTableWidgetItem(t->instr[row].parameter[i-1]));
+        ui->instrWidget->setItem(i,0,
+                             new QTableWidgetItem(t->instr_name[t->instr[i].type]));
+        for(int j=1;j<4;j++)
+        {
+            ui->instrWidget->setItem(i,j,
+                                 new QTableWidgetItem(t->instr[i].parameter[j-1]));
+        }
     }
+
 }
 
-void MainWindow::updataMemWidget()
+void MainWindow::updateMemWidget()
 {
     ui->memoryWidget->setColumnCount(t->memory_num);
     int col = 0;
@@ -108,7 +111,7 @@ void MainWindow::updataMemWidget()
             ui->memoryWidget->setItem(1,col,
                                   new QTableWidgetItem(QString::number(t->memory[i])));
             col++;
-            qDebug()<<i;
+            //qDebug()<<t->memory[i];
         }
 
     }
@@ -131,8 +134,9 @@ void MainWindow::on_loadAction_triggered()
          while((tmp = in.readLine()) != NULL)
          {
              t->addOneInstr(tmp);
-             updateInstrWidget();
+
          }
+         updateInstrWidget();
     }
 
 
@@ -150,6 +154,13 @@ void MainWindow::on_addMemoryAction_triggered()
     if (ok && !text.isEmpty())
     {
       t->addMemory(text);
-      updataMemWidget();
+      updateMemWidget();
     }
+}
+
+void MainWindow::on_deleteAction_triggered()
+{
+    t->init();
+    updateInstrWidget();
+    updateMemWidget();
 }

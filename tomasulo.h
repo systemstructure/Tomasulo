@@ -1,14 +1,17 @@
 ﻿#ifndef TOMASULO_H
 #define TOMASULO_H
 
-const int MAX_INSTR_NUM = 100;
+const int MAX_INSTR_NUM = 10000;
+
 #include <QString>
 
 
 struct instruction
 {
+
     int type;
     QString parameter[3];
+    int rs, rt, rd;
     friend std::ostream & operator <<(std::ostream &out, instruction &a)
     {
         out << a.type;
@@ -26,6 +29,13 @@ struct LSStation
     int address;
 };
 
+struct ReStation
+{
+    QString name;
+    bool isBusy;
+    int op;
+    int Vj,Vk,Qi,Qk;
+};
 
 class Tomasulo
 {
@@ -34,15 +44,26 @@ public:
     instruction instr[MAX_INSTR_NUM];
     int instr_num;
     int curr_instr_pos;
-    QString instr_name[6] = {"ADDD", "SUBD", "MULD", "DIVD", "LD", "ST"};
+    const QString instr_name[6] = {"ADDD", "SUBD", "MULD", "DIVD", "LD", "ST"};
+    const int clocktime[6] = {2,2,10,40,2,2};
+
+    const int ADDD = 0;
+    const int SUBU = 1;
+    const int MULD = 2;
+    const int DIVD = 3;
+    const int LD = 4;
+    const int ST = 5;
 
     LSStation load[3];
     LSStation store[3];
 
-    int memory[4096];
+    ReStation station[5];
+
+    float memory[4096];
     int memory_num;
 
     float reg[11];
+
 public:
     void init();
 
@@ -50,7 +71,7 @@ public:
 
     void addMemory(QString str);
 
-    void addOneMemory(int address, int data);
+    void addOneMemory(int address, float data);
 };
 
 #endif // TOMASULO_H

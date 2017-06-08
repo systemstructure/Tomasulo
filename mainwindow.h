@@ -26,9 +26,11 @@ private slots:
 
     void on_addMemoryAction_triggered();
 
+    void on_deleteAction_triggered();
+
 private:
     void updateInstrWidget();
-    void updataMemWidget();
+    void updateMemWidget();
 private:
     const int width = 70;
     const int height = 35;

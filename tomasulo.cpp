@@ -6,14 +6,14 @@
 Tomasulo::Tomasulo()
 {
     init();
-    instr_num = 0;
-    memory_num = 0;
-    memset(memory,0,sizeof(memory));
+
 }
 
 void Tomasulo::init()
 {
-
+    instr_num = 0;
+    memory_num = 0;
+    memset(memory,0,sizeof(memory));
 }
 
 void Tomasulo::addOneInstr(QString str)
@@ -44,12 +44,12 @@ void Tomasulo::addMemory(QString str)
 //        qDebug()<<list[i].left(pos);
 //        qDebug()<<list[i].mid(pos);
         int address = list[i].left(pos).toInt();
-        int data = list[i].mid(pos+1).toInt();
+        float data = list[i].mid(pos+1).toFloat();
         addOneMemory(address, data);
     }
 }
 
-void Tomasulo::addOneMemory(int address, int data)
+void Tomasulo::addOneMemory(int address, float data)
 {
     qDebug()<<address<<data;
     if(data == 0)
